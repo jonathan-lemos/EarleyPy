@@ -14,6 +14,10 @@ class orderedset:
         i = 0
         while i < len(self.list):
             yield self.list[i]
+            i += 1
+
+    def get(self, item):
+        return self.list[self.dict[item]]
 
     def __getitem__(self, index):
         return self.list[index]
@@ -25,4 +29,4 @@ class orderedset:
         self.dict[item] = len(self.list) - 1
 
     def __str__(self):
-        return "{" + ", ".join(self.list) + "}"
+        return "{" + ", ".join(str(x) for x in self.list) + "}"

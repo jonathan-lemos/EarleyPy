@@ -3,7 +3,7 @@ import re
 
 regexes = [
     ("ID", r"[a-zA-Z]+"),
-    ("INT", r"[0-9]+"),
+    ("NUM", r"[0-9]+"),
     ("TYPE", r"int|void"),
     ("KEYWORD", r"if|else|while|return"),
     ("DELIM", r"[,()\[\]{};]"),
