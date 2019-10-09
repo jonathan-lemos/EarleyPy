@@ -13,11 +13,14 @@ regexes = [
     ("RELOP", r">=|<=|==|!=|>|<"),
 ]
 
+if len(sys.argv) != 2:
+    print("Usage: " + sys.argv[0] + " [filename]")
+
 comment = False
 for line in open(sys.argv[1], "r"):
     if line.strip() == "":
         continue
-    print("Input: '" + line[:-1] + "'")
+    print("Input: '" + line.strip() + "'")
     line = line.strip()
     while line != "":
         if not comment:
@@ -31,7 +34,7 @@ for line in open(sys.argv[1], "r"):
             for token, pattern in regexes:
                 mat = re.match(pattern, line)
                 if mat:
-                    longest = (token, line[:mat.end()])
+                    longest = longest if len(longest[1]) > mat.end() else (token, line[:mat.end()])
             print(longest[0] + ": " + longest[1])
             line = line[len(longest[1]):]
             line = line.strip()
@@ -42,4 +45,5 @@ for line in open(sys.argv[1], "r"):
             else:
                 line = line[mat.end():].strip()
                 comment = False
-
+if comment:
+    print("ERROR: Block comment not closed")

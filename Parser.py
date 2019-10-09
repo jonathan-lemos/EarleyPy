@@ -1,5 +1,7 @@
 from grammar import grammar
+from SemAnalyzer import analyze_prgm, SemAnalyzerException
 import sys
+import re
 
 patterns = [
     ("RELOP", r">=|<=|==|!=|>|<"),
@@ -38,6 +40,15 @@ cfg = [
     "arg-list -> arg-list , expression | expression"
 ]
 
+string = "\n".join(re.sub(r"//.*$", "", x) for x in re.sub(r"/\*.*?\*/", "", open(sys.argv[1], "r").read(), flags=re.MULTILINE | re.DOTALL).split("\n"))
 gram = grammar(cfg)
-x = gram.parse(gram.lex(open(sys.argv[1], "r").read(), patterns))
-print(x)
+x = gram.parse(gram.lex(string, patterns))
+if not x:
+    print("PARSER FUKT")
+    exit(0)
+try:
+    analyze_prgm(x)
+    print("ACCEPT")
+except SemAnalyzerException:
+    print("REJECT")
+

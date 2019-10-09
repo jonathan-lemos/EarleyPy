@@ -81,6 +81,9 @@ class treenode:
     def __iter__(self):
         return iter(self.children)
 
+    def __len__(self):
+        return len(self.children)
+
     def __str__(self):
         return str(self.item)
 
