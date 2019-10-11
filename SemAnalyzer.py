@@ -51,7 +51,7 @@ def analyze_expr(expr):
             raise SemAnalyzerException()
         if (res[0], res[1] and not var_is_arr_deref) != analyze_expr(expr.children[2]):
             raise SemAnalyzerException()
-        return res
+        return res[0], res[1] and not var_is_arr_deref
     else:
         return analyze_simple_expr(expr.children[0])
 
@@ -108,14 +108,12 @@ def analyze_var(v):
     if res_is_arr_deref:
         if analyze_expr(v.children[2]) != ("int", False):
             raise SemAnalyzerException()
-    if res[1] != res_is_arr_deref:
-        raise SemAnalyzerException()
     return res[0], res[1] and not res_is_arr_deref
 
 
 def compare_params(params, args):
     def compare_single(param, arg):
-        if (param.children[0].children[0].token, len(param.children) == 4) != analyze_expr(arg.children[2]):
+        if (param.children[0].children[0].token, len(param.children) == 4) != analyze_expr(arg):
             raise SemAnalyzerException()
 
     if params.item.prod == ("void",):
@@ -140,7 +138,7 @@ def compare_params(params, args):
 def analyze_call(c):
     f = functab_search(c.children[0].token)
     compare_params(f[1], c.children[2])
-    return f[1], False
+    return f[0], False
 
 
 def analyze_vardec(vd):
@@ -172,7 +170,7 @@ def analyze_params(pl):
 def analyze_param(p):
     if p.children[0].children[0].token == "void":
         raise SemAnalyzerException("cannot have void parameters")
-    vartab_push(p.children[0], p.children[1], len(p.children) == 4)
+    vartab_push(p.children[0].children[0].token, p.children[1].token, len(p.children) == 4)
 
 
 def analyze_compound_stmt(cps):
@@ -192,11 +190,17 @@ def analyze_control_stmt(cs):
 
 
 def analyze_return_stmt(rs):
+    global return_hit
     if len(rs.children) == 2:
         if last_func[0] != "void":
             raise SemAnalyzerException()
-    elif last_func[0] != analyze_expr(rs.children[1])[0]:
-        raise SemAnalyzerException()
+    else:
+        res = analyze_expr(rs.children[1])
+        if res[1]:
+            raise SemAnalyzerException()
+        if last_func[0] != res[0]:
+            raise SemAnalyzerException()
+    return_hit = True
 
 
 analyzers = {

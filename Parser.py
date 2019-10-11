@@ -1,5 +1,6 @@
 from grammar import grammar
 from SemAnalyzer import analyze_prgm, SemAnalyzerException
+from CodeGen import default_gen
 import sys
 import re
 
@@ -44,11 +45,12 @@ string = "\n".join(re.sub(r"//.*$", "", x) for x in re.sub(r"/\*.*?\*/", "", ope
 gram = grammar(cfg)
 x = gram.parse(gram.lex(string, patterns))
 if not x:
-    print("PARSER FUKT")
+    print("REJECT")
     exit(0)
 try:
     analyze_prgm(x)
     print("ACCEPT")
 except SemAnalyzerException:
     print("REJECT")
-
+y = default_gen(x)
+print("\n".join("".join(str(z).ljust(15) for z in x) for x in y))
