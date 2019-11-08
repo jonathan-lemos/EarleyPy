@@ -45,6 +45,7 @@ def vartab_push(type, id, is_arr):
 def analyze_expr(expr):
     if len(expr.children) == 3:
         var = expr.children[0]
+        analyze_var(var)
         var_is_arr_deref = len(var.children) == 4
         res = vartab_search(var.children[0].token)
         if res[1] != var_is_arr_deref:
@@ -60,7 +61,7 @@ def analyze_simple_expr(expr):
     if len(expr.children) == 3:
         r1 = analyze_additive_expr(expr.children[0])
         r2 = analyze_additive_expr(expr.children[2])
-        if r1 == "void" or r1 != r2:
+        if r1[0] == "void" or r1[1] or r1 != r2:
             raise SemAnalyzerException()
         return "int", False
     else:
@@ -71,7 +72,7 @@ def analyze_additive_expr(expr):
     if len(expr.children) == 3:
         r1 = analyze_additive_expr(expr.children[0])
         r2 = analyze_term(expr.children[2])
-        if r1 == "void" or r1 != r2:
+        if r1[0] == "void" or r1[1] or r1 != r2:
             raise SemAnalyzerException()
         return r1
     else:
@@ -82,7 +83,7 @@ def analyze_term(expr):
     if len(expr.children) == 3:
         r1 = analyze_term(expr.children[0])
         r2 = analyze_factor(expr.children[2])
-        if r1 == "void" or r1 != r2:
+        if r1[0] == "void" or r1[1] or r1 != r2:
             raise SemAnalyzerException()
         return r1
     else:

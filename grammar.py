@@ -47,7 +47,7 @@ class earleyitem:
         return self.hash
 
     def __str__(self):
-        return "(" + str(self.item) + ", " + str(self.origin) + ". " + str(self.index) + ")"
+        return "(" + str(self.item) + ", " + str(self.origin) + ", " + str(self.index) + ")"
 
 
 class earleyset:
@@ -152,6 +152,18 @@ class grammar:
                         if not it2.is_reduce() and it2.current() == it.nt:
                             table[i].add(it2.advanced(), origin2, i, eitem)
         tokenstomatch = list(tokens)
+
+        """
+        to view the table:
+
+        for x, i in zip(table, range(len(table))):
+            print(str(i) + " '" + (tokens[i][0] if i < len(tokens) else "FINAL STATE") + "':")
+            for y in x:
+                print(str(y))
+            print()
+            
+        """
+
         stack = [earleyitem(newstart.advanced(), 0, len(table) - 1)]
         if stack[0] not in table[len(table) - 1]:
             return None

@@ -94,16 +94,16 @@ def gen_returnstmt(rs):
         return [(ctr(), "return", "", "", "")]
 
 
-def gen_condition(ex):
-    if len(ex.children) == 3:
-        e, ne = gen_expr(ex.children[2])
-        v, nv = gen_var(ex.children[0])
+def gen_condition(e):
+    if len(e.children) == 3:
+        e, ne = gen_expr(e.children[2])
+        v, nv = gen_var(e.children[0])
         res = [(ctr(), "assgn", ne, "", nv)]
         cmp = [(ctr(), "compr", res[-1][-1], "0", tmp())]
         br = [(ctr(), "breq", cmp[-1][-1], "", "XXX")]
         return e + v + res + cmp + br
     else:
-        return gen_condition_simple_expr(ex.children[0])
+        return gen_condition_simple_expr(e.children[0])
 
 
 def gen_condition_simple_expr(se):

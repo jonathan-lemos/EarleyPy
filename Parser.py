@@ -1,3 +1,4 @@
+#!/usr/bin/python
 from grammar import grammar
 from SemAnalyzer import analyze_prgm, SemAnalyzerException
 from CodeGen import default_gen
@@ -44,13 +45,16 @@ cfg = [
 string = "\n".join(re.sub(r"//.*$", "", x) for x in re.sub(r"/\*.*?\*/", "", open(sys.argv[1], "r").read(), flags=re.MULTILINE | re.DOTALL).split("\n"))
 gram = grammar(cfg)
 x = gram.parse(gram.lex(string, patterns))
+
 if not x:
     print("REJECT")
     exit(0)
 try:
     analyze_prgm(x)
-    print("ACCEPT")
+    # print("ACCEPT")
 except SemAnalyzerException:
     print("REJECT")
+    exit(0)
 y = default_gen(x)
-print("\n".join("".join(str(z).ljust(15) for z in x) for x in y))
+print("\n".join(" ".join(str(z).ljust(12) for z in x) for x in y))
+
